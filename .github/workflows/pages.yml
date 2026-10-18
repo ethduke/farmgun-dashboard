@@ -1,0 +1,131 @@
+name: Publish data-quality dashboard
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: read
+    outputs:
+      report_sha: ${{ steps.verify.outputs.report_sha }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - name: Validate reviewed source pin
+        id: source
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync,appendFileSync} from 'node:fs';
+          const source=JSON.parse(readFileSync('source.json','utf8'));
+          if(source.repository!=='ethduke/fungun'||!/^[a-f0-9]{40}$/.test(source.commit))throw new Error('Invalid source pin');
+          appendFileSync(process.env.GITHUB_OUTPUT,`commit=${source.commit}\n`);
+          JS
+      - name: Check out immutable pipeline source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: ethduke/fungun
+          ref: ${{ steps.source.outputs.commit }}
+          path: pipeline-source
+          persist-credentials: false
+      - name: Test recovery and generate SQL-derived evidence offline
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          docker run --rm --network none --read-only \
+            --cap-drop ALL --security-opt no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,nosuid,nodev,size=128m \
+            --mount "type=bind,src=$GITHUB_WORKSPACE/pipeline-source,dst=/source,readonly" \
+            --mount "type=bind,src=$RUNNER_TEMP/site,dst=/site" \
+            --workdir /source \
+            node:24-bookworm-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e \
+            sh -c 'node --test apps/data-pipeline/src/*.test.mjs && node apps/data-pipeline/src/demo.mjs --out /site'
+      - name: Validate aggregate-only publication
+        id: verify
+        env:
+          SITE_PATH: ${{ runner.temp }}/site
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import {readFileSync,readdirSync,appendFileSync} from 'node:fs';
+          import {createHash} from 'node:crypto';
+          const root=process.env.SITE_PATH;
+          assert.deepEqual(readdirSync(root).sort(),['.nojekyll','dashboard.css','dashboard.mjs','index.html','quality-report.json']);
+          const raw=readFileSync(`${root}/quality-report.json`,'utf8'),report=JSON.parse(raw);
+          assert.equal(report.schemaVersion,1);assert.equal(report.dataset.kind,'synthetic');
+          assert.equal(report.healthy,true);assert.equal(report.scenarios.length,3);
+          assert.deepEqual(report.scenarios.map(s=>s.id).sort(),['duplicates','gap','reorg']);
+          for(const scenario of report.scenarios){
+            assert.equal(scenario.before.healthy,false);assert.equal(scenario.after.healthy,true);
+            assert.equal(scenario.after.checks.length,8);assert.ok(scenario.after.checks.every(c=>c.passed));
+          }
+          assert.equal(/0x[a-f0-9]{40,}/i.test(raw),false);
+          const sha=createHash('sha256').update(raw).digest('hex');
+          appendFileSync(process.env.GITHUB_OUTPUT,`report_sha=${sha}\n`);
+          JS
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: ${{ runner.temp }}/site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - name: Deploy verified artifact
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Verify published report digest and page health
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          REPORT_SHA: ${{ needs.build.outputs.report_sha }}
+        run: |
+          node --input-type=module <<'JS'
+          import {createHash} from 'node:crypto';
+          import {setTimeout as pause} from 'node:timers/promises';
+          const base=new URL(process.env.PAGE_URL);
+          if(base.origin!=='https://ethduke.github.io'||base.pathname!=='/farmgun-dashboard/'||!/^[a-f0-9]{64}$/.test(process.env.REPORT_SHA))throw new Error('Unexpected publication target');
+          let verified=false;
+          for(let i=0;i<10;i++){
+            try{
+              const url=new URL('quality-report.json',base);url.searchParams.set('v',`${process.env.GITHUB_RUN_ID}-${i}`);
+              const response=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(8000)});
+              if(!response.ok)throw new Error('Report unavailable');
+              const body=await response.text();
+              if(createHash('sha256').update(body).digest('hex')!==process.env.REPORT_SHA)throw new Error('Report propagation pending');
+              const page=await fetch(base,{redirect:'error',signal:AbortSignal.timeout(8000)});
+              const html=await page.text();
+              if(!page.ok||!page.headers.get('content-type')?.startsWith('text/html')||!html.includes('<title>Farmgun / Data quality</title>'))throw new Error('Page unavailable');
+              verified=true;break;
+            }catch{if(i<9)await pause(3000);}
+          }
+          if(!verified)throw new Error('Published dashboard verification failed; inspect the Pages deployment.');
+          console.log('Published page and exact aggregate report verified.');
+          JS
