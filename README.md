@@ -21,4 +21,4 @@ cross-repository write token or paid server.
 To update the demonstration, review a new source revision, update the commit in
 `source.json`, and push or dispatch **Publish data-quality dashboard**. To restore
 an earlier version, revert the pin to its previous reviewed commit and publish.
-Source code: https://github.com/ethduke/fungun/tree/codex/data-quality-pipeline/apps/data-pipeline
+Source code: https://github.com/ethduke/fungun/tree/main/apps/data-pipeline
