@@ -1,0 +1,67 @@
+name: Refresh real-chain snapshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      snapshot:
+        description: Verified aggregate JSON from the local collector (use npm run data:publish)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  owner-publication:
+    if: >-
+      github.repository == 'ethduke/farmgun-dashboard' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor_id == '2248185' &&
+      github.actor == 'ethduke' &&
+      github.triggering_actor == 'ethduke'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - name: Validate reviewed source pin
+        id: source
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync,appendFileSync} from 'node:fs';
+          const source=JSON.parse(readFileSync('source.json','utf8'));
+          if(source.repository!=='ethduke/fungun'||!/^[a-f0-9]{40}$/.test(source.commit))throw new Error('Invalid source pin');
+          appendFileSync(process.env.GITHUB_OUTPUT,`commit=${source.commit}\n`);
+          JS
+      - name: Check out reviewed collector
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: ethduke/fungun
+          ref: ${{ steps.source.outputs.commit }}
+          path: pipeline-source
+          persist-credentials: false
+      - name: Read aggregate input without shell interpolation
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync,writeFileSync} from 'node:fs';
+          const input=JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH,'utf8')).inputs?.snapshot;
+          if(typeof input!=='string'||Buffer.byteLength(input)>65535)throw new Error('Invalid snapshot input');
+          writeFileSync(`${process.env.RUNNER_TEMP}/snapshot-report.json`,input);
+          JS
+      - name: Validate, freeze and publish the owner-approved snapshot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COLLECTOR_COMMIT: ${{ steps.source.outputs.commit }}
+          SNAPSHOT_REPORT: ${{ runner.temp }}/snapshot-report.json
+        run: node pipeline-source/apps/data-pipeline/src/publish-snapshot.mjs

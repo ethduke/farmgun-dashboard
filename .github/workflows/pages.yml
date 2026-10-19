@@ -21,6 +21,7 @@ jobs:
       pages: read
     outputs:
       report_sha: ${{ steps.verify.outputs.report_sha }}
+      snapshot_sha: ${{ steps.verify.outputs.snapshot_sha }}
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -53,9 +54,10 @@ jobs:
             --tmpfs /tmp:rw,nosuid,nodev,size=128m \
             --mount "type=bind,src=$GITHUB_WORKSPACE/pipeline-source,dst=/source,readonly" \
             --mount "type=bind,src=$RUNNER_TEMP/site,dst=/site" \
+            --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/publication,readonly" \
             --workdir /source \
             node:24-bookworm-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e \
-            sh -c 'node --test apps/data-pipeline/src/*.test.mjs && node apps/data-pipeline/src/demo.mjs --out /site'
+            sh -c 'node --test apps/data-pipeline/src/*.test.mjs && if [ -f /publication/snapshot-report.json ]; then node apps/data-pipeline/src/snapshot-site.mjs --out /site --report /publication/snapshot-report.json; else node apps/data-pipeline/src/demo.mjs --out /site; fi'
       - name: Validate aggregate-only publication
         id: verify
         env:
@@ -66,7 +68,13 @@ jobs:
           import {readFileSync,readdirSync,appendFileSync} from 'node:fs';
           import {createHash} from 'node:crypto';
           const root=process.env.SITE_PATH;
-          assert.deepEqual(readdirSync(root).sort(),['.nojekyll','dashboard.css','dashboard.mjs','index.html','quality-report.json']);
+          const files=readdirSync(root).sort(),hasSnapshot=files.includes('snapshot-report.json');
+          assert.deepEqual(files,hasSnapshot?['.nojekyll','dashboard.css','dashboard.mjs','index.html','quality-report.json','recovery.html','snapshot-report.json','snapshot.mjs']:['.nojekyll','dashboard.css','dashboard.mjs','index.html','quality-report.json']);
+          if(hasSnapshot){
+            const {validateSnapshot}=await import(`${process.env.GITHUB_WORKSPACE}/pipeline-source/apps/data-pipeline/src/snapshot-site.mjs`);
+            const bytes=readFileSync(`${root}/snapshot-report.json`);validateSnapshot(JSON.parse(bytes));
+            appendFileSync(process.env.GITHUB_OUTPUT,`snapshot_sha=${createHash('sha256').update(bytes).digest('hex')}\n`);
+          }
           const raw=readFileSync(`${root}/quality-report.json`,'utf8'),report=JSON.parse(raw);
           assert.equal(report.schemaVersion,1);assert.equal(report.dataset.kind,'synthetic');
           assert.equal(report.healthy,true);assert.equal(report.scenarios.length,3);
@@ -106,6 +114,7 @@ jobs:
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
           REPORT_SHA: ${{ needs.build.outputs.report_sha }}
+          SNAPSHOT_SHA: ${{ needs.build.outputs.snapshot_sha }}
         run: |
           node --input-type=module <<'JS'
           import {createHash} from 'node:crypto';
@@ -123,6 +132,11 @@ jobs:
               const page=await fetch(base,{redirect:'error',signal:AbortSignal.timeout(8000)});
               const html=await page.text();
               if(!page.ok||!page.headers.get('content-type')?.startsWith('text/html')||!html.includes('<title>Farmgun / Data quality</title>'))throw new Error('Page unavailable');
+              if(process.env.SNAPSHOT_SHA){
+                const snapshotUrl=new URL('snapshot-report.json',base);snapshotUrl.searchParams.set('v',`${process.env.GITHUB_RUN_ID}-${i}`);
+                const snapshot=await fetch(snapshotUrl,{redirect:'error',signal:AbortSignal.timeout(8000)});
+                if(!snapshot.ok||createHash('sha256').update(await snapshot.text()).digest('hex')!==process.env.SNAPSHOT_SHA)throw new Error('Snapshot propagation pending');
+              }
               verified=true;break;
             }catch{if(i<9)await pause(3000);}
           }
