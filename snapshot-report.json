@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "kind": "chain-snapshot",
+  "chain": "Robinhood Chain",
+  "chainId": 4663,
+  "symbol": "USDG",
+  "decimals": 6,
+  "finality": "finalized",
+  "healthy": true,
+  "analysis": {
+    "capturedAt": "2026-10-19T04:33:42.919Z",
+    "start": "2026-10-19T03:57:31.000Z",
+    "end": "2026-10-19T04:12:31.000Z",
+    "startHeight": 92316793,
+    "endHeight": 92325593,
+    "blocks": 8801,
+    "transfers": 9411,
+    "transactions": 4648,
+    "activeAddresses": 1442,
+    "amountRaw": "8488605296653",
+    "medianRaw": "34266787",
+    "largestRaw": "1262617624417",
+    "hours": [
+      {
+        "start": "2026-10-19T03:57:31.000Z",
+        "end": "2026-10-19T04:57:31.000Z",
+        "observed": true,
+        "transfers": 9411,
+        "amountRaw": "8488605296653"
+      },
+      {
+        "start": "2026-10-19T04:57:31.000Z",
+        "end": "2026-10-19T05:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T05:57:31.000Z",
+        "end": "2026-10-19T06:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T06:57:31.000Z",
+        "end": "2026-10-19T07:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T07:57:31.000Z",
+        "end": "2026-10-19T08:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T08:57:31.000Z",
+        "end": "2026-10-19T09:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T09:57:31.000Z",
+        "end": "2026-10-19T10:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T10:57:31.000Z",
+        "end": "2026-10-19T11:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T11:57:31.000Z",
+        "end": "2026-10-19T12:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T12:57:31.000Z",
+        "end": "2026-10-19T13:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T13:57:31.000Z",
+        "end": "2026-10-19T14:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T14:57:31.000Z",
+        "end": "2026-10-19T15:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T15:57:31.000Z",
+        "end": "2026-10-19T16:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T16:57:31.000Z",
+        "end": "2026-10-19T17:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T17:57:31.000Z",
+        "end": "2026-10-19T18:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T18:57:31.000Z",
+        "end": "2026-10-19T19:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T19:57:31.000Z",
+        "end": "2026-10-19T20:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T20:57:31.000Z",
+        "end": "2026-10-19T21:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T21:57:31.000Z",
+        "end": "2026-10-19T22:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T22:57:31.000Z",
+        "end": "2026-10-19T23:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-19T23:57:31.000Z",
+        "end": "2026-10-20T00:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-20T00:57:31.000Z",
+        "end": "2026-10-20T01:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-20T01:57:31.000Z",
+        "end": "2026-10-20T02:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      },
+      {
+        "start": "2026-10-20T02:57:31.000Z",
+        "end": "2026-10-20T03:57:31.000Z",
+        "observed": false,
+        "transfers": 0,
+        "amountRaw": "0"
+      }
+    ],
+    "peakHour": "2026-10-19T03:57:31.000Z"
+  },
+  "checks": [
+    {
+      "name": "No skipped queried block ranges",
+      "passed": true
+    },
+    {
+      "name": "Repeated log queries reconciled",
+      "passed": true
+    },
+    {
+      "name": "Unique events and SQL projection match capture",
+      "passed": true
+    },
+    {
+      "name": "Sampled block receipts and transactions verified",
+      "passed": true
+    },
+    {
+      "name": "Foreign keys and SQLite integrity",
+      "passed": true
+    },
+    {
+      "name": "Exact integer totals match hourly buckets",
+      "passed": true
+    },
+    {
+      "name": "Checkpoint matches last verified query range",
+      "passed": true
+    }
+  ],
+  "sources": [
+    "rpc.mainnet.chain.robinhood.com"
+  ],
+  "session": {
+    "status": "collecting",
+    "targetEnd": "2026-10-20T03:57:31.000Z",
+    "intervalMinutes": 15,
+    "capturedSeconds": 900,
+    "targetSeconds": 86400
+  },
+  "duplicatesIgnored": 0,
+  "missingEventsRecovered": 0,
+  "receiptBlocksVerified": 10,
+  "failedChecks": 0,
+  "verifiedIntervals": 1,
+  "blockHashDigest": "da740f33d0c09936cf37cafb64f879632ba549ba5aeceeb7ae2437a861441a95",
+  "captureDigest": "de2db033aa82bf9cc3947c0377a87a695441cf2809ed8849cc53df1d0f455dac",
+  "collectorCommit": "656042c1773bc66e267297566a8316d3e5876088",
+  "scope": "Canonical USDG Transfer stream on Robinhood Chain; complete query-range coverage with sampled receipt audits.",
+  "verification": "One public RPC: every event range is re-read and selected block receipts are audited. Consistent provider omissions outside sampled blocks are not ruled out; block headers are stored only where observed or sampled.",
+  "databaseSha256": "956ed788198d0fb442b4b15a3f83ca32baa1b5449faa97faec4cc9eadc13dca0"
+}
