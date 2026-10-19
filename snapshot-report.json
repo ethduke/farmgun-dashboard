@@ -8,102 +8,102 @@
   "finality": "finalized",
   "healthy": true,
   "analysis": {
-    "capturedAt": "2026-10-19T04:33:42.919Z",
+    "capturedAt": "2026-10-19T17:15:59.381Z",
     "start": "2026-10-19T03:57:31.000Z",
-    "end": "2026-10-19T04:12:31.000Z",
+    "end": "2026-10-19T15:57:31.000Z",
     "startHeight": 92316793,
-    "endHeight": 92325593,
-    "blocks": 8801,
-    "transfers": 9411,
-    "transactions": 4648,
-    "activeAddresses": 1442,
-    "amountRaw": "8488605296653",
-    "medianRaw": "34266787",
-    "largestRaw": "1262617624417",
+    "endHeight": 92737703,
+    "blocks": 420911,
+    "transfers": 796033,
+    "transactions": 413455,
+    "activeAddresses": 20742,
+    "amountRaw": "694219519360892",
+    "medianRaw": "79668956",
+    "largestRaw": "6629813000000",
     "hours": [
       {
         "start": "2026-10-19T03:57:31.000Z",
         "end": "2026-10-19T04:57:31.000Z",
         "observed": true,
-        "transfers": 9411,
-        "amountRaw": "8488605296653"
+        "transfers": 41921,
+        "amountRaw": "34456327987314"
       },
       {
         "start": "2026-10-19T04:57:31.000Z",
         "end": "2026-10-19T05:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 36122,
+        "amountRaw": "20568186364645"
       },
       {
         "start": "2026-10-19T05:57:31.000Z",
         "end": "2026-10-19T06:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 37620,
+        "amountRaw": "33479495925302"
       },
       {
         "start": "2026-10-19T06:57:31.000Z",
         "end": "2026-10-19T07:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 43556,
+        "amountRaw": "42060918435630"
       },
       {
         "start": "2026-10-19T07:57:31.000Z",
         "end": "2026-10-19T08:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 45810,
+        "amountRaw": "41625697376135"
       },
       {
         "start": "2026-10-19T08:57:31.000Z",
         "end": "2026-10-19T09:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 44931,
+        "amountRaw": "37587372681273"
       },
       {
         "start": "2026-10-19T09:57:31.000Z",
         "end": "2026-10-19T10:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 66094,
+        "amountRaw": "48234103685174"
       },
       {
         "start": "2026-10-19T10:57:31.000Z",
         "end": "2026-10-19T11:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 54444,
+        "amountRaw": "58817110256629"
       },
       {
         "start": "2026-10-19T11:57:31.000Z",
         "end": "2026-10-19T12:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 55122,
+        "amountRaw": "54433601249131"
       },
       {
         "start": "2026-10-19T12:57:31.000Z",
         "end": "2026-10-19T13:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 136175,
+        "amountRaw": "140457920564316"
       },
       {
         "start": "2026-10-19T13:57:31.000Z",
         "end": "2026-10-19T14:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 141756,
+        "amountRaw": "114200401377364"
       },
       {
         "start": "2026-10-19T14:57:31.000Z",
         "end": "2026-10-19T15:57:31.000Z",
-        "observed": false,
-        "transfers": 0,
-        "amountRaw": "0"
+        "observed": true,
+        "transfers": 92482,
+        "amountRaw": "68298383457979"
       },
       {
         "start": "2026-10-19T15:57:31.000Z",
@@ -190,7 +190,7 @@
         "amountRaw": "0"
       }
     ],
-    "peakHour": "2026-10-19T03:57:31.000Z"
+    "peakHour": "2026-10-19T13:57:31.000Z"
   },
   "checks": [
     {
@@ -229,18 +229,18 @@
     "status": "collecting",
     "targetEnd": "2026-10-20T03:57:31.000Z",
     "intervalMinutes": 15,
-    "capturedSeconds": 900,
+    "capturedSeconds": 43200,
     "targetSeconds": 86400
   },
   "duplicatesIgnored": 0,
   "missingEventsRecovered": 0,
-  "receiptBlocksVerified": 10,
-  "failedChecks": 0,
-  "verifiedIntervals": 1,
-  "blockHashDigest": "da740f33d0c09936cf37cafb64f879632ba549ba5aeceeb7ae2437a861441a95",
-  "captureDigest": "de2db033aa82bf9cc3947c0377a87a695441cf2809ed8849cc53df1d0f455dac",
+  "receiptBlocksVerified": 470,
+  "failedChecks": 2,
+  "verifiedIntervals": 47,
+  "blockHashDigest": "9974322c8cb064381575b87451bf4493be281d8edd4023b7c147f5ff93e215b6",
+  "captureDigest": "69797f2279f56318f363286ce514a2def3f0580748d3a0bcd0cab5a324b3e8c7",
   "collectorCommit": "656042c1773bc66e267297566a8316d3e5876088",
   "scope": "Canonical USDG Transfer stream on Robinhood Chain; complete query-range coverage with sampled receipt audits.",
   "verification": "One public RPC: every event range is re-read and selected block receipts are audited. Consistent provider omissions outside sampled blocks are not ruled out; block headers are stored only where observed or sampled.",
-  "databaseSha256": "956ed788198d0fb442b4b15a3f83ca32baa1b5449faa97faec4cc9eadc13dca0"
+  "databaseSha256": "a5dd478aabe068fc861144177ae52decbe265b31418f0e19e3c40862d6a62b14"
 }
