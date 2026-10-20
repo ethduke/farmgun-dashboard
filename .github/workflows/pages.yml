@@ -57,7 +57,7 @@ jobs:
             --mount "type=bind,src=$GITHUB_WORKSPACE,dst=/publication,readonly" \
             --workdir /source \
             node:24-bookworm-slim@sha256:ba849c60be29959425b8734d57b8b4b7d56f98edd9504c9af091d5281095a71e \
-            sh -c 'node --test apps/data-pipeline/src/*.test.mjs && if [ -f /publication/snapshot-report.json ]; then node apps/data-pipeline/src/snapshot-site.mjs --out /site --report /publication/snapshot-report.json; else node apps/data-pipeline/src/demo.mjs --out /site; fi'
+            sh -c 'node --test apps/data-pipeline/src/*.test.mjs && if [ -f /publication/snapshot-report.json ]; then node apps/data-pipeline/src/snapshot-site.mjs --out /site --report /publication/snapshot-report.json && node /publication/render-findings.mjs /site; else node apps/data-pipeline/src/demo.mjs --out /site; fi'
       - name: Validate aggregate-only publication
         id: verify
         env:
@@ -73,6 +73,7 @@ jobs:
           if(hasSnapshot){
             const {validateSnapshot}=await import(`${process.env.GITHUB_WORKSPACE}/pipeline-source/apps/data-pipeline/src/snapshot-site.mjs`);
             const bytes=readFileSync(`${root}/snapshot-report.json`);validateSnapshot(JSON.parse(bytes));
+            assert.ok(readFileSync(`${root}/index.html`,'utf8').includes('<summary>What does this data tell us?</summary>'));
             appendFileSync(process.env.GITHUB_OUTPUT,`snapshot_sha=${createHash('sha256').update(bytes).digest('hex')}\n`);
           }
           const raw=readFileSync(`${root}/quality-report.json`,'utf8'),report=JSON.parse(raw);
@@ -135,7 +136,7 @@ jobs:
               if(process.env.SNAPSHOT_SHA){
                 const snapshotUrl=new URL('snapshot-report.json',base);snapshotUrl.searchParams.set('v',`${process.env.GITHUB_RUN_ID}-${i}`);
                 const snapshot=await fetch(snapshotUrl,{redirect:'error',signal:AbortSignal.timeout(8000)});
-                if(!snapshot.ok||createHash('sha256').update(await snapshot.text()).digest('hex')!==process.env.SNAPSHOT_SHA)throw new Error('Snapshot propagation pending');
+                if(!snapshot.ok||createHash('sha256').update(await snapshot.text()).digest('hex')!==process.env.SNAPSHOT_SHA||!html.includes('<summary>What does this data tell us?</summary>'))throw new Error('Snapshot propagation pending');
               }
               verified=true;break;
             }catch{if(i<9)await pause(3000);}

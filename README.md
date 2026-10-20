@@ -31,3 +31,9 @@ from the pipeline repository. Only aggregate JSON is sent to the owner-guarded
 `Refresh real-chain snapshot` workflow; it performs no RPC requests and dispatches
 Pages after saving the report. Partial snapshots show their actual duration.
 There are no scheduled collection workflows or public refresh controls.
+
+The collapsed **What does this data tell us?** section is generated offline by
+`render-findings.mjs` from the same validated snapshot on every publication. It
+summarizes collection checks, failed reads, report delay, hourly peaks, transfer
+size skew and the limits of single-provider sampling. It does not change the
+reviewed collector pin or embed figures that become stale on manual refresh.
